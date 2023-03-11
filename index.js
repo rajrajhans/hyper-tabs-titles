@@ -1,54 +1,68 @@
 // Require
-const { remote } = require('electron');
-const color = require('color');
+const { remote } = require("electron");
+const color = require("color");
 
 // Config
 exports.decorateConfig = (config) => {
-    const backColor = color(config.backgroundColor);
-    const isDark = backColor.dark();
-    const colors = {
-        highlight: isDark ? backColor.lighten(0.31).string() : backColor.darken(0.09).string(),
-        highlightier: isDark ? backColor.lighten(0.43).string() : backColor.darken(0.09).string(),
-        inactive: isDark ? backColor.desaturate(0.3).lightness(36).string() : backColor.desaturate(0.3).lightness(58).string(),
-        back: isDark ? backColor.darken(0.2).string() : backColor.darken(0.05).string(),
-    };
+  const backColor = color(config.backgroundColor);
+  const isDark = backColor.dark();
+  const colors = {
+    highlight: isDark
+      ? backColor.lighten(0.31).string()
+      : backColor.darken(0.09).string(),
+    highlightier: isDark
+      ? backColor.lighten(0.43).string()
+      : backColor.darken(0.09).string(),
+    inactive: isDark
+      ? backColor.desaturate(0.3).lightness(36).string()
+      : backColor.desaturate(0.3).lightness(58).string(),
+    back: isDark
+      ? backColor.darken(0.2).string()
+      : backColor.darken(0.05).string(),
+  };
 
-    // Define default colors
-    const configColors = Object.assign({
-        black: '#000000',
-        red: '#ff0000',
-        green: '#33ff00',
-        yellow: '#ffff00',
-        blue: '#0066ff',
-        magenta: '#cc00ff',
-        cyan: '#00ffff',
-        white: '#d0d0d0',
-        lightBlack: '#808080',
-        lightRed: '#ff0000',
-        lightGreen: '#33ff00',
-        lightYellow: '#ffff00',
-        lightBlue: '#0066ff',
-        lightMagenta: '#cc00ff',
-        lightCyan: '#00ffff',
-        lightWhite: '#ffffff',
-    }, config.colors);
+  // Define default colors
+  const configColors = Object.assign(
+    {
+      black: "#000000",
+      red: "#ff0000",
+      green: "#33ff00",
+      yellow: "#ffff00",
+      blue: "#0066ff",
+      magenta: "#cc00ff",
+      cyan: "#00ffff",
+      white: "#d0d0d0",
+      lightBlack: "#808080",
+      lightRed: "#ff0000",
+      lightGreen: "#33ff00",
+      lightYellow: "#ffff00",
+      lightBlue: "#0066ff",
+      lightMagenta: "#cc00ff",
+      lightCyan: "#00ffff",
+      lightWhite: "#ffffff",
+    },
+    config.colors
+  );
 
-    const hyperTabs = Object.assign({
-        trafficButtons: false,
-        border: false,
-        activityColor: configColors.lightYellow,
-        activityPulse: true,
-        tabIcons: true,
-        tabIconsColored: false,
-        closeAlign: 'left',
-    }, config.hyperTabs);
+  const hyperTabs = Object.assign(
+    {
+      trafficButtons: false,
+      border: false,
+      activityColor: configColors.lightYellow,
+      activityPulse: true,
+      tabIcons: true,
+      tabIconsColored: false,
+      closeAlign: "left",
+    },
+    config.hyperTabs
+  );
 
-    const trafficButtonsCSS = `
+  const trafficButtonsCSS = `
         .tabs_list {
             margin-left: 77px;
         }
-    `
-    const trafficButtonsBorderCSS = `
+    `;
+  const trafficButtonsBorderCSS = `
         .tab_tab:first-of-type {
             border-left-width: 1px !important;
             border-bottom-width: 0 !important;
@@ -60,8 +74,8 @@ exports.decorateConfig = (config) => {
         .tab_tab.tab_active:first-of-type:before {
             left: -1px;
         }
-    `
-    const borderCSS = `
+    `;
+  const borderCSS = `
         .tabs_list {
             border-bottom: 1px solid ${colors.highlight};
         }
@@ -84,8 +98,8 @@ exports.decorateConfig = (config) => {
             bottom: -1px;
             border-bottom: 1px solid ${config.backgroundColor};
         }
-    `
-    const pulseCSS = `
+    `;
+  const pulseCSS = `
         .tab_tab.tab_hasActivity .tab_text {
             animation: pulse 3s ease-in-out infinite;
         }
@@ -106,8 +120,8 @@ exports.decorateConfig = (config) => {
                 opacity: 1;
             }
         }
-    `
-    const iconsCSS = `
+    `;
+  const iconsCSS = `
         .tab_process {
             padding: 0 6px 0 20px;
         }
@@ -164,13 +178,13 @@ exports.decorateConfig = (config) => {
             -webkit-mask-size: 14px 14px;
         }
         .tabs_title .tab_process:before, .tab_tab.tab_active .tab_process:before, .tab_tab:hover .tab_process:before {
-            background-color: ${isDark ? 'white' : config.foregroundColor};
+            background-color: ${isDark ? "white" : config.foregroundColor};
         }
         .tab_tab.tab_hasActivity .tab_process:before {
             background-color: ${hyperTabs.activityColor} !important;
         }
-    `
-    const iconsColoredCSS = `
+    `;
+  const iconsColoredCSS = `
         .tab_process:not(.process_shell):before {
             transition: none;
         }
@@ -186,22 +200,22 @@ exports.decorateConfig = (config) => {
         .tab_process.process_python:before {
             background-color: ${configColors.yellow} !important;
         }
-    `
+    `;
 
-    // Hide traffic buttons
-    if (!hyperTabs.trafficButtons) {
-        exports.decorateBrowserOptions = (defaults) => {
-            return Object.assign({}, defaults, {
-                titleBarStyle: '',
-                transparent: true,
-                frame: false,
-            });
-        };
-    }
+  // Hide traffic buttons
+  if (!hyperTabs.trafficButtons) {
+    exports.decorateBrowserOptions = (defaults) => {
+      return Object.assign({}, defaults, {
+        titleBarStyle: "",
+        transparent: true,
+        frame: false,
+      });
+    };
+  }
 
-    return Object.assign({}, config, {
-        css: `
-            ${config.css || ''}
+  return Object.assign({}, config, {
+    css: `
+            ${config.css || ""}
             .hyper_main {
                 border: 0;
             }
@@ -211,7 +225,7 @@ exports.decorateConfig = (config) => {
                 left: 0;
             }
             .tabs_title {
-                color: ${isDark ? 'white' : config.foregroundColor};
+                color: ${isDark ? "white" : config.foregroundColor};
             }
             .tabs_list {
                 margin-left: 0;
@@ -226,7 +240,7 @@ exports.decorateConfig = (config) => {
                 transition: background 150ms ease;
             }
             .tab_tab:hover {
-                color: ${isDark ? 'white' : config.foregroundColor};
+                color: ${isDark ? "white" : config.foregroundColor};
                 background-color: ${colors.highlight};
             }
             .tab_tab:first-of-type {
@@ -234,12 +248,16 @@ exports.decorateConfig = (config) => {
                 padding-left: 1px;
             }
             .tab_tab.tab_active {
-                color: ${isDark ? 'white' : config.foregroundColor};
+                color: ${isDark ? "white" : config.foregroundColor};
                 background-color: transparent;
             }
             .tab_icon {
                 top: 9px;
-                ${hyperTabs.closeAlign === 'right' ? 'right: 9px;' : 'left: 9px;' }
+                ${
+                  hyperTabs.closeAlign === "right"
+                    ? "right: 9px;"
+                    : "left: 9px;"
+                }
                 width: 16px;
                 height: 16px;
                 border-radius: 2px;
@@ -251,7 +269,7 @@ exports.decorateConfig = (config) => {
                 position: absolute;
                 width: 100%;
                 height: 100%;
-                background-color: ${isDark ? 'white' : config.foregroundColor};
+                background-color: ${isDark ? "white" : config.foregroundColor};
                 -webkit-mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5IiBoZWlnaHQ9IjkiIHZpZXdCb3g9IjAgMCA5IDkiPjxwb2x5Z29uIGZpbGw9IiMwMDAwMDAiIGZpbGwtcnVsZT0iZXZlbm9kZCIgcG9pbnRzPSI0Ljk1IDQuMjQzIDguNDg1IC43MDcgNy43NzggMCA0LjI0MyAzLjUzNiAuNzA3IDAgMCAuNzA3IDMuNTM2IDQuMjQzIDAgNy43NzggLjcwNyA4LjQ4NSA0LjI0MyA0Ljk1IDcuNzc4IDguNDg1IDguNDg1IDcuNzc4Ii8+PC9zdmc+');
                 -webkit-mask-repeat: no-repeat;
                 -webkit-mask-size: 9px;
@@ -278,7 +296,9 @@ exports.decorateConfig = (config) => {
                 background-color: ${hyperTabs.activityColor};
             }
             .tab_tab.tab_hasActivity .tab_icon:hover:before {
-                background-color: ${isDark ? colors.back : config.foregroundColor};
+                background-color: ${
+                  isDark ? colors.back : config.foregroundColor
+                };
             }
             .tab_process {
                 max-width: 100%;
@@ -291,41 +311,58 @@ exports.decorateConfig = (config) => {
             .tab_shape {
                 display: none;
             }
-            ${hyperTabs.trafficButtons ? trafficButtonsCSS : ''}
-            ${hyperTabs.trafficButtons && hyperTabs.border ? trafficButtonsBorderCSS : ''}
-            ${hyperTabs.border ? borderCSS : ''}
-            ${hyperTabs.activityPulse ? pulseCSS : ''}
-            ${hyperTabs.tabIcons ? iconsCSS : ''}
-            ${hyperTabs.tabIconsColored ? iconsColoredCSS : ''}
-        `
-    });
+            ${hyperTabs.trafficButtons ? trafficButtonsCSS : ""}
+            ${
+              hyperTabs.trafficButtons && hyperTabs.border
+                ? trafficButtonsBorderCSS
+                : ""
+            }
+            ${hyperTabs.border ? borderCSS : ""}
+            ${hyperTabs.activityPulse ? pulseCSS : ""}
+            ${hyperTabs.tabIcons ? iconsCSS : ""}
+            ${hyperTabs.tabIconsColored ? iconsColoredCSS : ""}
+        `,
+  });
 };
 
 // Current process icon
 const getIcon = (title) => {
-    const process = title.match(/(?:[\s]+|^)(gulp|php|node|npm|yarn|vim|nvim|python|mysql)(?:[\s]+|\d+$)/i);
-    return process ? process[0].trim().toLowerCase() : 'shell';
+  const process = title.match(
+    /(?:[\s]+|^)(gulp|php|node|npm|yarn|vim|nvim|python|mysql)(?:[\s]+|\d+$)/i
+  );
+  return process ? process[0].trim().toLowerCase() : "shell";
 };
 
 // Tab process icons
 exports.decorateTab = (Tab, { React }) => {
-    return class extends Tab {
-        render() {
-            const icon = getIcon(this.props.text);
-            this.props.text = React.createElement('span', { className: `tab_process process_${icon}` }, this.props.text);
-            return React.createElement(Tab, Object.assign({}, this.props, {}));
-        }
+  return class extends Tab {
+    render() {
+      const icon = getIcon(this.props.text);
+      this.props.text = React.createElement(
+        "span",
+        { className: `tab_process process_${icon}` },
+        this.props.text
+      );
+      return React.createElement(Tab, Object.assign({}, this.props, {}));
     }
+  };
 };
 
 exports.decorateTabs = (Tabs, { React }) => {
-    return class extends Tabs {
-        render() {
-            if (this.props.tabs.length === 1 && typeof this.props.tabs[0].title === 'string') {
-                const icon = getIcon(this.props.tabs[0].title);
-                this.props.tabs[0].title = React.createElement('span', { className: `tab_process process_${icon}` }, this.props.tabs[0].title);
-            }
-            return React.createElement(Tabs, Object.assign({}, this.props, {}));
-        }
+  return class extends Tabs {
+    render() {
+      if (
+        this.props.tabs.length === 1 &&
+        typeof this.props.tabs[0].title === "string"
+      ) {
+        const icon = getIcon(this.props.tabs[0].title);
+        this.props.tabs[0].title = React.createElement(
+          "span",
+          { className: `tab_process process_${icon}` },
+          this.props.tabs[0].title
+        );
+      }
+      return React.createElement(Tabs, Object.assign({}, this.props, {}));
     }
+  };
 };

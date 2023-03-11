@@ -1,13 +1,13 @@
 {
-  "name": "hyper-tabs-enhanced",
-  "version": "0.4.2",
-  "description": "Enhaned Tabs Plugin for Hyper",
+  "name": "hyper-tabs-titles",
+  "version": "0.5.0",
+  "description": "Hyper plugin to show shortened path of working directory in tab titles, along with icons. Fork of hyper-tabs-enhanced.",
   "main": "index.js",
   "license": "MIT",
-  "repository": "henrikdahl/hyper-tabs-enhanced",
+  "repository": "rajrajhans/hyper-tabs-titles",
   "author": {
-    "name": "Henrik Dahlheim",
-    "email": "henrik.dahlheim@gmail.com"
+    "name": "Raj Rajhans",
+    "email": "me@rajrajhans.com"
   },
   "files": [
     "index.js"
@@ -15,6 +15,7 @@
   "keywords": [
     "hyper",
     "hyper-tabs",
+    "hyper-tabs-titles",
     "hyper-tabs-enhanced",
     "hyperterm",
     "hyperterm-tabs",
