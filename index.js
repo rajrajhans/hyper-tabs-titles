@@ -325,6 +325,37 @@ exports.decorateConfig = (config) => {
   });
 };
 
+const getTitle = (tabTitle, numOpenTabs) => {
+  let currentTitle = undefined;
+
+  // tabTitle can be a string or a React element
+  if (typeof tabTitle === "string") {
+    currentTitle = tabTitle;
+  }
+
+  if (typeof tabTitle === "object") {
+    currentTitle = tabTitle?.props?.children;
+  }
+
+  return getModifiedTitle(currentTitle, numOpenTabs);
+};
+
+const getIconClassName = (tabTitle) => {
+  // tabTitle can be a string or a React element
+  if (typeof tabTitle === "string") {
+    const icon = getIcon(tabTitle);
+    return `tab_process process_${icon}`;
+  }
+  if (typeof tabTitle === "object") {
+    // implies that we have already set the className
+    return tabTitle?.props?.className;
+  }
+  console.error(
+    "[hyper-tabs-enhanced-titles] tabTitle is not a string or a React element"
+  );
+  return null;
+};
+
 // Current process icon
 const getIcon = (title) => {
   const process = title.match(
@@ -333,34 +364,63 @@ const getIcon = (title) => {
   return process ? process[0].trim().toLowerCase() : "shell";
 };
 
-// Tab process icons
-exports.decorateTab = (Tab, { React }) => {
-  return class extends Tab {
-    render() {
-      const icon = getIcon(this.props.text);
-      this.props.text = React.createElement(
-        "span",
-        { className: `tab_process process_${icon}` },
-        this.props.text
-      );
-      return React.createElement(Tab, Object.assign({}, this.props, {}));
+const getModifiedTitle = (currentTitle, numOpenTabs) => {
+  if (currentTitle === undefined) {
+    console.error(
+      "[hyper-tabs-titles] tabTitle is not a string or a React element"
+    );
+    return currentTitle;
+  }
+
+  // check if the tab title is of the pattern "user@host:dir".
+  // if it is not, then directly return currentTitle. if it is, we want to modify it.
+
+  if (currentTitle.match(/^[^@]+@[^:]+:.+$/)) {
+    // ^ - match the beginning of the string
+    // [^@]+ - match one or more characters that are not the "@" symbol
+    // @ - match the "@" symbol
+    // [^:]+ - match one or more characters that are not the ":" symbol
+    // : - match the ":" symbol
+    // .+ - match one or more characters (any character except newline)
+    // $ - match the end of the string
+
+    const cwd = currentTitle.split(":")[1];
+    const threshold = getThreshold();
+
+    if (numOpenTabs > threshold) {
+      // if there are more than 3 tabs open, then we want to show only the last directory in the path
+      const dirs = cwd.split("/");
+      return dirs[dirs.length - 1];
     }
-  };
+
+    return cwd;
+  }
+
+  return currentTitle;
+};
+
+// helper for getting number of open tabs threshold
+const getThreshold = () => {
+  const { hyperTabs } = config.getConfig();
+  return hyperTabs?.openTabsThreshold ?? 3;
 };
 
 exports.decorateTabs = (Tabs, { React }) => {
   return class extends Tabs {
     render() {
-      if (
-        this.props.tabs.length === 1 &&
-        typeof this.props.tabs[0].title === "string"
-      ) {
-        const icon = getIcon(this.props.tabs[0].title);
-        this.props.tabs[0].title = React.createElement(
-          "span",
-          { className: `tab_process process_${icon}` },
-          this.props.tabs[0].title
-        );
+      if (this.props.tabs.length > 0) {
+        // Add icon to all tabs
+        this.props.tabs = this.props.tabs.map((tab) => {
+          const iconClassName = getIconClassName(tab.title);
+          const title = getTitle(tab.title, this.props.tabs.length);
+          tab.title = React.createElement(
+            "span",
+            { className: iconClassName },
+            title
+          );
+
+          return tab;
+        });
       }
       return React.createElement(Tabs, Object.assign({}, this.props, {}));
     }
